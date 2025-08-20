@@ -4,9 +4,10 @@ import Fogs from "./components/fog/Fogs";
 
 export default function Home() {
   return (<>
-  <div className="static">
+  <div className="">
     <Fogs />
     <Top />
+
     
   </div>
     </>
