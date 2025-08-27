@@ -1,20 +1,25 @@
 "use client";
 import Fogs from "../fog/Fogs";
 import TitleHead from "../title/TitleHead";
-import { useScroll, motion, useTransform, useMotionValue } from "framer-motion";
+import { useScroll, motion, useTransform } from "framer-motion";
 import OrangeGlobe3D from "./Globe";
+import Texts from "./bottom/Texts";
+import { useEffect, useState } from "react";
+
 
 const Top: React.FC<{}> =  ({}) => {
     const {scrollY} = useScroll(); 
     // const top = useTransform(scrollY, [0, 1200], [100, 1300]);
+
     const top = useTransform(scrollY, [0,1200 ], [100,1300 ]);
-    const bar = useTransform(scrollY, [1200, 1500], [0, 400]);
-    
+    const bar = useTransform(scrollY, [1200, 1500], [0, 1000]);
 
 
-  return (<><div className="flex items-center justify-center mt-[200px] flex-col ">
-    <div >
-    <motion.div className="" style={{y : top}} animate={{
+
+
+  return (<>
+  
+    <motion.div className="flex justify-center items-center flex-col mt-[200px] gap-6" style={{y : top}} animate={{
         transition: {
             type: "keyframes",
             duration: 0.3
@@ -22,22 +27,24 @@ const Top: React.FC<{}> =  ({}) => {
     }}>
 
         
-        <div className="sticky h-[200vh]">
+
         <div className="flex ">
             <TitleHead />
             <div className="w-[500px] h-[500px] mx-[-350px] z-10 ">
                 <OrangeGlobe3D />
             </div>
         </div>
-        </div>
-    </motion.div>
-    </div>
-    <div className="items-start">
-    <motion.div className="" style={{height: "30px", width : bar, backgroundColor: "#F2613F"}}/>
-    </div>
-    </div>
+
+    <motion.div className=" z-[100] sticky`" style={{height: "30px", width : bar, backgroundColor: "#F2613F"}}/>
+    <Texts />
+
     
-    </>
+    </motion.div>
+
+
+
+    
+    </> 
     );
 }
 
