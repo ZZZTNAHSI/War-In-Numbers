@@ -1,3 +1,4 @@
+"use client";
 import TextPara from "./Text";
 import { useEffect, useState } from "react";
 import { useScroll, AnimatePresence } from "framer-motion";

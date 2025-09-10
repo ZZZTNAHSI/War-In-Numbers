@@ -1,8 +1,5 @@
-"use client"
+"use client";
 import { motion, Variants } from "framer-motion";
-
-
-
 
 const Fog: React.FC<{delay: number}> = ({delay}) => {
     const variant: Variants = {

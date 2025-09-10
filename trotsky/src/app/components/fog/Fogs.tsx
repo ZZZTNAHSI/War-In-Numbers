@@ -1,8 +1,6 @@
-"use client"
+"use client";
 import { motion } from "framer-motion";
 import Fog from "./Fog";
-
-
 
 const Fogs: React.FC<{}> = () => {
     return (<>

@@ -1,3 +1,4 @@
+"use client";
 import {motion} from "framer-motion";
 const TextPara: React.FC<{text: string}> = ({text}) => {
     return (
