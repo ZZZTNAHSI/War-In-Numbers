@@ -1,7 +1,31 @@
 "use client";
 import TextPara from "./Text";
 import { useEffect, useState } from "react";
-import { useScroll, AnimatePresence } from "framer-motion";
+import { useScroll, AnimatePresence, motion, stagger, delay } from "framer-motion";
+import BigButton from "./BigButton";
+// initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}} transition={{duration: 0.5}}
+const VariantsButton = {
+        hidden: {
+            opacity: 0,
+        },
+        visible: {
+            opacity: 1,
+            transition: {  duration: 0.5 },
+        },
+        exit: {
+            opacity: 0,
+            transition: { duration: 0.5 },
+        }
+    
+};
+const VariantsWrapper = {
+    hidden: {},
+    visible: {
+        transition: {
+            staggerChildren: 0.25,
+        }
+    }
+};
 const Texts: React.FC<{}> = ({}) => {
     const {scrollY} = useScroll(); 
     const [showText, setShowText] = useState({
@@ -50,10 +74,23 @@ const Texts: React.FC<{}> = ({}) => {
             {showText.text2 && <TextPara key={2} text={
                 `My goal for this website is for you to check your countries origin and see the data for yourself because I feel knowing about your
                 home country is pretty gosh darn important. I also want to highlight the various wars that are happening in the world :).
-                `}/>  }     
+                `}/>  }
+            <AnimatePresence mode="wait" >
+                {showText.text2 && <motion.div variants={VariantsWrapper} initial="hidden" animate="visible" exit="exit">
+                    <motion.div  className="!z-[11] !mt-10" variants={VariantsButton} >
+                        <BigButton text="Globe" link="/" img='/FakeGlobe.jpg' text2="See the development of wars throughout the years"/>
+                    </motion.div>
+                    <div className="!my-10"/>
+                    <motion.div  className="!z-[11]" variants={VariantsButton}  >
+                        <BigButton text="Graph" link="/" img='/KINGSOLOMON.jpg' text2="Click here to enter the main website"/>
+                    </motion.div>
+                    </motion.div>
+                }
+                </AnimatePresence>
+            
             </AnimatePresence>
         </div>
     </>);
-}
+}   
 
 export default Texts;
