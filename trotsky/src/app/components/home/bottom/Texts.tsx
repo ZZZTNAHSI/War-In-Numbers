@@ -3,6 +3,7 @@ import TextPara from "./Text";
 import { useEffect, useState } from "react";
 import { useScroll, AnimatePresence, motion, stagger, delay } from "framer-motion";
 import BigButton from "./BigButton";
+import Footer from "../../layout/Footer";
 // initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}} transition={{duration: 0.5}}
 const VariantsButton = {
         hidden: {
@@ -89,7 +90,9 @@ const Texts: React.FC<{}> = ({}) => {
                 </AnimatePresence>
             
             </AnimatePresence>
+
         </div>
+        <Footer />
     </>);
 }   
 
