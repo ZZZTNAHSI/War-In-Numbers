@@ -66,6 +66,7 @@ const WorldMap: React.FC<{}> = () => {
             weight: 1,
             opacity: 1,
             color: '#F2613F',
+            
         };
     }
 
