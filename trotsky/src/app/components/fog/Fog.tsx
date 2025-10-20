@@ -16,7 +16,7 @@ const Fog: React.FC<{delay: number}> = ({delay}) => {
     }
     return (
     <motion.div
-    className="z-[1] !mt-[-300px] pointer-events-none  opacity-20  bg-cover fog absolute top-0 left-0 w-[200vw] h-[200%] bg-[url(../assets/images/cumulus-fog-mist-desktop-wallpaper-haze-mist-d6be98f056cdefbcb7654d967054e3c1.png)] "
+    className="z-[1] !mt-[-300px] pointer-events-none  opacity-20  bg-cover fog absolute top-0 left-0 w-[200vw] h-[200%] bg-[url(/fog.png)] "
     variants={variant}
     animate="fog"
     ></motion.div>
