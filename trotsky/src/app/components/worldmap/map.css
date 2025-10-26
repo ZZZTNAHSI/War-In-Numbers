@@ -10,3 +10,12 @@
 .text {
     font-family: "Inter", sans-serif;
 }
+
+/* ensure the element that holds the map is positioned (parentElement is commonly the wrapper) */
+.map-wrapper { position: relative; }
+
+/* If you add a global blur on the map wrapper when selected, the overlay sits above it and won't be blurred */
+.map-with-selection .leaflet-container { filter: blur(3px); }
+
+/* overlay specific */
+.country-overlay path { vector-effect: non-scaling-stroke; }
