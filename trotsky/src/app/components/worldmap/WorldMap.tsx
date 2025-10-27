@@ -82,7 +82,9 @@ const WorldMap: React.FC<{}> = () => {
         });
     }, []);
 
-    let getCountryData: () => ReturnConflictRecord;
+    let getCountryData: () => ReturnConflictRecord = () => {
+        return [];
+    };
         
 
         const style: L.StyleFunction = (feature) : L.PathOptions => {
@@ -239,12 +241,19 @@ const WorldMap: React.FC<{}> = () => {
                     </div>
                 </motion.div>
                 {overlayInfo && mapRef ? (
+                    <>
+                    <div className="!z-[99999999] absolute h-full w-full">
+                        
+                        <CountryDetails getCountryData={getCountryData} />
+                    </div>
+                    
                     <CountryOverlay
                         info={overlayInfo}
                         container={mapRef.getContainer().parentElement ?? mapRef.getContainer()}
                         onClose={handleCloseDetails}
                         fillColor={overlayInfo.fillColor}
                     />
+                    </>
                 ) : null}
             </div>
         </Suspense>

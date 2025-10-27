@@ -14,14 +14,154 @@ export default function GlobeHome() {
             place: "North America",
             start_date: "1990-01-01",
             end_date: "1995-01-01",
-        }]
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },{
+            party1_iso: ["US"],
+            party2_iso: ["CA"],
+            death_toll: "1000",
+            place: "North America",
+            start_date: "1990-01-01",
+            end_date: "1995-01-01",
+        },]
     
 
     return (
-    // <div className="flex flex-col items-center justify-center !m-[250px]">
-    //     <WorldMapWrapper />
-    // </div>
-        <CountryDetails getCountryData={getData} />
+    <div className="flex flex-col items-center justify-center !m-[250px]">
+        <WorldMapWrapper />
+    </div>
+
     );
 }
 

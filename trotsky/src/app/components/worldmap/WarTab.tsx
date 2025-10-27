@@ -1,3 +1,4 @@
+import Image from "next/image";
 interface WarTabProps   {
     conflictData: {
         party1_iso: string[];
@@ -9,7 +10,7 @@ interface WarTabProps   {
     }
   };
 
-  const isotocountryname = {
+const isotocountryname: { [key: string]: string } = {
   "AF": "Afghanistan",
   "AX": "Aland Islands",
   "AL": "Albania",
@@ -257,14 +258,67 @@ interface WarTabProps   {
   "ZM": "Zambia",
   "ZW": "Zimbabwe"
 }
+function formatDateToNameVersion(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+}
 
 const WarTab: React.FC<WarTabProps> = ({ conflictData }) => {
     return (
+        <div className="flex flex-col !p-2">
         <div className="flex gap-4 ">
-            <div className="flex gap-1 flex-col">
-                <div className="font-semibold text-[14px] text-[#e7e9ec]">Side A:</div>
-                <div className="flex flex-col gap-2 "></div>
+            <div className="flex gap-1 flex-col ">
+                <div className="font-bold text-[17px] text-[#e7e9ec]">Side A:</div>
+                <div className="flex flex-col gap-2">
+                    {conflictData.party1_iso.map((party1_iso) => {
+                        const isCountryName = isotocountryname[party1_iso];
+                        const countryName = isCountryName ? isotocountryname[party1_iso] : party1_iso;
+                        return (<div key={party1_iso} className="flex items-center">
+                            {isCountryName && <Image
+                                src={`https://flagcdn.com/${party1_iso.toLowerCase()}.svg`}
+                                alt={`${countryName} flag`}
+                                width={32}
+                                height={24}
+                                className="rounded-[3px] !mr-2 "
+                            />}
+                            <span className="text-[#e7e9ec] text-[13px]">{countryName}</span>
+                        </div>)
+                    })}
+                </div>
             </div>
+            <div className="flex gap-1 flex-col ">
+                <div className="font-bold text-[17px] text-[#e7e9ec]">Side B:</div>
+                <div className="flex flex-col gap-2">
+                    {conflictData.party2_iso.map((party2_iso) => {
+                        const isCountryName = isotocountryname[party2_iso];
+                        const countryName = isCountryName ? isotocountryname[party2_iso] : party2_iso;
+                        return (<div key={party2_iso} className="flex items-center">
+                            {isCountryName && <Image
+                                src={`https://flagcdn.com/${party2_iso.toLowerCase()}.svg`}
+                                alt={`${countryName} flag`}
+                                width={32}
+                                height={24}
+                                className="rounded-[3px] !mr-2 "
+                            />}
+                            <span className="text-[#e7e9ec] text-[13px]">{countryName}</span>
+                        </div>)
+                    })}
+                </div>
+            </div>
+        </div>
+        <div className="!mt-[10px]">
+        <div className="text-[13px] text-[#cbd1d8] ">
+            Death Toll: {conflictData.death_toll}
+        </div>
+        <div className="text-[13px] text-[#cbd1d8] ">
+            From {formatDateToNameVersion(conflictData.start_date)} to {formatDateToNameVersion(conflictData.end_date)}
+        </div>
+        <div className="bg-[#F2613F] w-ful h-[3px] !my-2"/>
+        </div>
         </div>
     );
 };

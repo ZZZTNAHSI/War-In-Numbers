@@ -3,6 +3,7 @@ import React, { useCallback, useRef } from 'react';
 import Draggable from 'react-draggable';
 import WarTab from './WarTab';
 import Circles from './Circles';
+import {motion} from 'framer-motion';
 
 
 interface CountryDetailsProps {
@@ -20,21 +21,23 @@ const CountryDetails: React.FC<CountryDetailsProps> = ({getCountryData }) => {
   }, []);
 
   return (
-    <div className="relative w-[1000px] h-[800px]">
-      <Draggable
+      <Draggable 
         nodeRef={nodeRef}
         handle=".handle"
         bounds="parent"
         onStart={handleStart}
       >
-        <div ref={nodeRef} className='w-[250px] h-[400px] bg-white flex flex-col p-4 rounded-[12px] shadow-lg '>
+        <div ref={nodeRef} className='w-[275px] h-[400px] !z-[99999999] '>
+        <div  className='static w-[275px] h-[400px] bg-black flex flex-col p-4 rounded-[12px] shadow-xl shadow-[#F2613F]/30 hover:shadow-[#F2613F]  active:shadow-[#F2613F] ease-in duration-200 ' >
           <Circles />
+          <div className='overflow-y-auto max-h-[300px]'>
           {data.map((conflict, index) => (
             <WarTab key={index} conflictData={conflict} />
           ))}
+          </div>
+        </div>
         </div>
       </Draggable>
-    </div>
   );
 };
 
