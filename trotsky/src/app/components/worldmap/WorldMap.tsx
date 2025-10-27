@@ -4,7 +4,7 @@ import "leaflet-defaulticon-compatibility"
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css"
 import "./map.css"
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from "react-leaflet";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import * as Papa from "papaparse";
 import * as L from "leaflet";
 import {scaleLinear, scaleLog} from "d3";
@@ -15,9 +15,11 @@ import { Geometry, Feature } from "geojson";
 import { geoPath, geoMercator } from "d3-geo";
 import CountryOverlay from "./CountryOverlay";
 import {motion} from "framer-motion";
+import { Return } from "three/examples/jsm/transpiler/AST.js";
 
 
 type ConflictRecord = { start_date: string; end_date: string; party1_iso: string; party2_iso: string; death_toll: string; place: string; };
+type ReturnConflictRecord = { start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; }[];
 const bounds = new L.LatLngBounds(
   [-110, -200], // Southwest corner of the world
   [110, 200]  // Northeast
@@ -31,7 +33,6 @@ const WorldMap: React.FC<{}> = () => {
     const [geoData, setGeoData] = useState<ConflictRecord[]>([]);
     const [year, setYear] = useState(1991);
     const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-    const [selectedCountryData, setSelectedCountryData] = useState<ConflictRecord[]>([]);
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
     const [overlayInfo, setOverlayInfo] = useState<{ 
         d: string; 
@@ -81,6 +82,9 @@ const WorldMap: React.FC<{}> = () => {
         });
     }, []);
 
+    let getCountryData: () => ReturnConflictRecord;
+        
+
         const style: L.StyleFunction = (feature) : L.PathOptions => {
             const iso = feature?.properties?.iso_a2;
             const placeData = geoData.filter((record) => record.place.includes(iso));
@@ -112,6 +116,42 @@ const WorldMap: React.FC<{}> = () => {
             if (bounds) {
                 mapRef.fitBounds(bounds, { padding: [40, 40], maxZoom: 6});
             }
+
+            getCountryData = () => {
+                const returnObject: ReturnConflictRecord = [];
+                let obj;
+                for (let i = 0; i < geoData.length; i++) {
+                    const record = geoData[i];
+                    if (!obj) {
+                        obj = record;
+                    } else if (obj.start_date === record.start_date) {
+                        const tempObj: any = {start_date: obj.start_date, end_date: obj.end_date, party1_iso: [], party2_iso: [], death_toll: null, place: obj.place};
+                        let deathTollTemp = obj.death_toll ? parseInt(obj.death_toll) || 0 : 0 + parseInt(record.death_toll) || 0;
+                        tempObj.party1_iso.push(obj.party1_iso);
+                        tempObj.party2_iso.push(obj.party2_iso);
+                        tempObj.party1_iso.push(record.party1_iso);
+                        tempObj.party2_iso.push(record.party2_iso);
+                        for (let j = i + 1; j < geoData.length; j++) {
+                            const rec = geoData[j];
+                            if (rec.start_date === obj.start_date) {
+                                const isoaTemp = rec.party1_iso;
+                                const isobTemp = rec.party2_iso;
+                                tempObj.party1_iso.push(isoaTemp);
+                                tempObj.party2_iso.push(isobTemp);
+                                deathTollTemp += parseInt(rec.death_toll) || 0;
+                            }
+                    }
+                    tempObj.death_toll = deathTollTemp.toString();
+                    returnObject.push(tempObj);
+                    obj = record;
+            } else {
+                const tempObj: any = {start_date: obj.start_date, end_date: obj.end_date, party1_iso: [obj.party1_iso], party2_iso: [obj.party2_iso], death_toll: obj.death_toll, place: obj.place};
+                returnObject.push(tempObj);
+                obj = record;
+            }
+        }
+        return returnObject;
+    }
 
             // wait for the map animation to finish, then capture the path
             mapRef.once('moveend', () => {
