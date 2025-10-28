@@ -32,7 +32,7 @@ const WorldMap: React.FC<{}> = () => {
     const [geoJsonData, setgeoJsonData] = useState(null!);
     const [geoData, setGeoData] = useState<ConflictRecord[]>([]);
     const [year, setYear] = useState(1991);
-    const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+    const [getCountryData, setCountryData] = useState<() => ReturnConflictRecord>(() => []);
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
     const [overlayInfo, setOverlayInfo] = useState<{ 
         d: string; 
@@ -82,9 +82,6 @@ const WorldMap: React.FC<{}> = () => {
         });
     }, []);
 
-    let getCountryData: () => ReturnConflictRecord = () => {
-        return [];
-    };
         
 
         const style: L.StyleFunction = (feature) : L.PathOptions => {
@@ -119,9 +116,11 @@ const WorldMap: React.FC<{}> = () => {
                 mapRef.fitBounds(bounds, { padding: [40, 40], maxZoom: 6});
             }
 
-            getCountryData = () => {
+            setCountryData(() => { 
+                return () => {
                 const returnObject: ReturnConflictRecord = [];
                 let obj;
+                console.log(placeData)
                 for (let i = 0; i < geoData.length; i++) {
                     const record = geoData[i];
                     if (!obj) {
@@ -154,6 +153,8 @@ const WorldMap: React.FC<{}> = () => {
         }
         return returnObject;
     }
+            }
+        );
 
             // wait for the map animation to finish, then capture the path
             mapRef.once('moveend', () => {
@@ -197,6 +198,7 @@ const WorldMap: React.FC<{}> = () => {
     }
     const handleCloseDetails = () => {
         setOverlayInfo(null);
+        setCountryData(() => { return () => []; });
         if (mapRef) {
             mapRef.setView([40, 0], 2);
         }
@@ -242,7 +244,7 @@ const WorldMap: React.FC<{}> = () => {
                 </motion.div>
                 {overlayInfo && mapRef ? (
                     <>
-                    <div className="!z-[99999999] absolute h-full w-full">
+                    <div className="!z-[99999999] absolute h-[750px] w-[1300px] top-0 left-0">
                         
                         <CountryDetails getCountryData={getCountryData} />
                     </div>
