@@ -13,6 +13,7 @@ interface CountryDetailsProps {
 const CountryDetails: React.FC<CountryDetailsProps> = ({getCountryData }) => {
   const data = getCountryData();
   if (!data) return null;
+  console.log(data)
   
   const nodeRef = useRef(null);
 
@@ -31,9 +32,9 @@ const CountryDetails: React.FC<CountryDetailsProps> = ({getCountryData }) => {
         <div  className='static w-[275px] h-[400px] bg-black flex flex-col p-4 rounded-[12px] shadow-xl shadow-[#F2613F]/30 hover:shadow-[#F2613F]  active:shadow-[#F2613F] ease-in duration-200 ' >
           <Circles />
           <div className='overflow-y-auto max-h-[300px]'>
-          {data.map((conflict, index) => (
+          {/* {data.map((conflict, index) => (
             <WarTab key={index} conflictData={conflict} />
-          ))}
+          ))} */}
           </div>
         </div>
         </div>

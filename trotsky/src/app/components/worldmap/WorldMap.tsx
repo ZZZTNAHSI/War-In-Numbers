@@ -104,6 +104,7 @@ const WorldMap: React.FC<{}> = () => {
 
     const onEachFeature = (feature: Feature, layer: Layer) => {
         const iso = feature?.properties?.iso_a2;
+        // if there is no iso it will .innclude all terriroties including the letters
         const placeData = geoData.filter((record) => record.place.includes(iso));
         const death = placeData.reduce((sum, record) => sum + (parseInt(record.death_toll) || 0), 0);
         const fillColor = death > 0 ? colorScale(death) : "#000000";
@@ -115,6 +116,7 @@ const WorldMap: React.FC<{}> = () => {
             if (bounds) {
                 mapRef.fitBounds(bounds, { padding: [40, 40], maxZoom: 6});
             }
+            console.log(iso)
 
             setCountryData(() => { 
                 return () => {
