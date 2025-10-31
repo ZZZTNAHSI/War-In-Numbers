@@ -25,14 +25,19 @@ const bounds = new L.LatLngBounds(
   [110, 200]  // Northeast
 );
 
+type CountryObject = {
+    iso: string;
+    data: (iso: string) => ReturnConflictRecord | undefined;
+}
+
 
 
 
 const WorldMap: React.FC<{}> = () => {
     const [geoJsonData, setgeoJsonData] = useState(null!);
     const [geoData, setGeoData] = useState<ConflictRecord[]>([]);
-    const [year, setYear] = useState(1991);
-    const [getCountryData, setCountryData] = useState<() => ReturnConflictRecord>(() => []);
+    const [year, setYear] = useState(1960);
+    const [isoOfCountry, setCountryData] = useState<string>("");
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
     const [overlayInfo, setOverlayInfo] = useState<{ 
         d: string; 
@@ -45,6 +50,47 @@ const WorldMap: React.FC<{}> = () => {
         };
         fillColor: string;
     } | null>(null);
+
+const getData = useCallback((isop: string) => {
+    const placeData = geoData.filter(record => record.place.replace(",", '') === isop);
+    if (placeData.length === 0) return [];
+    console.log("placeData", placeData);
+
+    // Group by start_date
+    const grouped: { [date: string]: ConflictRecord[] } = {};
+    for (const record of placeData) {
+        if (!grouped[record.start_date]) grouped[record.start_date] = [];
+        grouped[record.start_date].push(record);
+    }
+
+    const result: ReturnConflictRecord = [];
+    for (const start_date in grouped) {
+        const group = grouped[start_date];
+        const party1Set = new Set<string>();
+        const party2Set = new Set<string>();
+        let deathTollSum = 0;
+        let end_date = group[0].end_date;
+        let place = group[0].place;
+
+        for (const rec of group) {
+            party1Set.add(rec.party1_iso);
+            party2Set.add(rec.party2_iso);
+            deathTollSum += parseInt(rec.death_toll) || 0;
+            if (rec.end_date > end_date) end_date = rec.end_date;
+        }
+
+        result.push({
+            start_date,
+            end_date,
+            party1_iso: Array.from(party1Set),
+            party2_iso: Array.from(party2Set),
+            death_toll: deathTollSum.toString(),
+            place,
+        });
+    }
+
+    return result;
+    }, [geoData]);
 
 
 
@@ -82,11 +128,15 @@ const WorldMap: React.FC<{}> = () => {
         });
     }, []);
 
+    console.log("geoData", geoData);
+
         
 
         const style: L.StyleFunction = (feature) : L.PathOptions => {
             const iso = feature?.properties?.iso_a2;
-            const placeData = geoData.filter((record) => record.place.includes(iso));
+            // this is .includes, some iso's have commas which results in some places not having color when clicked on. 
+            const placeData = geoData.filter((record) => record.place.replace(",",'') === (iso));
+
             const death = placeData.reduce((sum, record) => sum + (parseInt(record.death_toll) || 0), 0);
             const color = death > 0 ? colorScale(death) : "#000000";
         return {
@@ -105,7 +155,7 @@ const WorldMap: React.FC<{}> = () => {
     const onEachFeature = (feature: Feature, layer: Layer) => {
         const iso = feature?.properties?.iso_a2;
         // if there is no iso it will .innclude all terriroties including the letters
-        const placeData = geoData.filter((record) => record.place.includes(iso));
+        const placeData = geoData.filter((record) => record.place.replace(",",'') === (iso));
         const death = placeData.reduce((sum, record) => sum + (parseInt(record.death_toll) || 0), 0);
         const fillColor = death > 0 ? colorScale(death) : "#000000";
 
@@ -116,47 +166,8 @@ const WorldMap: React.FC<{}> = () => {
             if (bounds) {
                 mapRef.fitBounds(bounds, { padding: [40, 40], maxZoom: 6});
             }
-            console.log(iso)
 
-            setCountryData(() => { 
-                return () => {
-                const returnObject: ReturnConflictRecord = [];
-                let obj;
-                console.log(placeData)
-                for (let i = 0; i < geoData.length; i++) {
-                    const record = geoData[i];
-                    if (!obj) {
-                        obj = record;
-                    } else if (obj.start_date === record.start_date) {
-                        const tempObj: any = {start_date: obj.start_date, end_date: obj.end_date, party1_iso: [], party2_iso: [], death_toll: null, place: obj.place};
-                        let deathTollTemp = obj.death_toll ? parseInt(obj.death_toll) || 0 : 0 + parseInt(record.death_toll) || 0;
-                        tempObj.party1_iso.push(obj.party1_iso);
-                        tempObj.party2_iso.push(obj.party2_iso);
-                        tempObj.party1_iso.push(record.party1_iso);
-                        tempObj.party2_iso.push(record.party2_iso);
-                        for (let j = i + 1; j < geoData.length; j++) {
-                            const rec = geoData[j];
-                            if (rec.start_date === obj.start_date) {
-                                const isoaTemp = rec.party1_iso;
-                                const isobTemp = rec.party2_iso;
-                                tempObj.party1_iso.push(isoaTemp);
-                                tempObj.party2_iso.push(isobTemp);
-                                deathTollTemp += parseInt(rec.death_toll) || 0;
-                            }
-                    }
-                    tempObj.death_toll = deathTollTemp.toString();
-                    returnObject.push(tempObj);
-                    obj = record;
-            } else {
-                const tempObj: any = {start_date: obj.start_date, end_date: obj.end_date, party1_iso: [obj.party1_iso], party2_iso: [obj.party2_iso], death_toll: obj.death_toll, place: obj.place};
-                returnObject.push(tempObj);
-                obj = record;
-            }
-        }
-        return returnObject;
-    }
-            }
-        );
+            
 
             // wait for the map animation to finish, then capture the path
             mapRef.once('moveend', () => {
@@ -192,7 +203,9 @@ const WorldMap: React.FC<{}> = () => {
                 }
 
                 const d = pathEl.getAttribute('d') ?? '';
+                setCountryData(() => iso);
                 setOverlayInfo({ d, matrix: matrixStr, dimensions, fillColor });
+                
 
 
             });
@@ -200,7 +213,7 @@ const WorldMap: React.FC<{}> = () => {
     }
     const handleCloseDetails = () => {
         setOverlayInfo(null);
-        setCountryData(() => { return () => []; });
+        setCountryData("");
         if (mapRef) {
             mapRef.setView([40, 0], 2);
         }
@@ -248,7 +261,7 @@ const WorldMap: React.FC<{}> = () => {
                     <>
                     <div className="!z-[99999999] absolute h-[750px] w-[1300px] top-0 left-0">
                         
-                        <CountryDetails getCountryData={getCountryData} />
+                        <CountryDetails getData={getData} iso={isoOfCountry}  />
                     </div>
                     
                     <CountryOverlay

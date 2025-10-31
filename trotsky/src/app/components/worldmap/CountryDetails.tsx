@@ -1,19 +1,22 @@
 "use client";
-import React, { useCallback, useRef } from 'react';
+import React, { Key, useCallback, useRef } from 'react';
 import Draggable from 'react-draggable';
 import WarTab from './WarTab';
 import Circles from './Circles';
 import {motion} from 'framer-motion';
 
+type ReturnConflictRecord = { start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; }[];
 
-interface CountryDetailsProps {
-  getCountryData: () => { start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; }[]
-}
 
-const CountryDetails: React.FC<CountryDetailsProps> = ({getCountryData }) => {
-  const data = getCountryData();
-  if (!data) return null;
-  console.log(data)
+
+
+
+
+
+const CountryDetails: React.FC<{iso: string; getData: (iso: string) => ReturnConflictRecord}> = ({iso, getData}) => {
+  const countryList = getData(iso);
+  if (!countryList) return null;
+  
   
   const nodeRef = useRef(null);
 
@@ -32,9 +35,9 @@ const CountryDetails: React.FC<CountryDetailsProps> = ({getCountryData }) => {
         <div  className='static w-[275px] h-[400px] bg-black flex flex-col p-4 rounded-[12px] shadow-xl shadow-[#F2613F]/30 hover:shadow-[#F2613F]  active:shadow-[#F2613F] ease-in duration-200 ' >
           <Circles />
           <div className='overflow-y-auto max-h-[300px]'>
-          {/* {data.map((conflict, index) => (
+          {countryList.map((conflict, index) => (
             <WarTab key={index} conflictData={conflict} />
-          ))} */}
+          ))}
           </div>
         </div>
         </div>
