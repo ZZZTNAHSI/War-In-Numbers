@@ -18,8 +18,8 @@ import {motion} from "framer-motion";
 import { Return } from "three/examples/jsm/transpiler/AST.js";
 
 
-type ConflictRecord = { start_date: string; end_date: string; party1_iso: string; party2_iso: string; death_toll: string; place: string; };
-type ReturnConflictRecord = { start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; }[];
+type ConflictRecord = {conflict_id: string; start_date: string; end_date: string; party1_iso: string; party2_iso: string; death_toll: string; place: string; };
+type ReturnConflictRecord = {conflict_id: string; start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; }[];
 const bounds = new L.LatLngBounds(
   [-110, -200], // Southwest corner of the world
   [110, 200]  // Northeast
@@ -79,14 +79,14 @@ const getData = useCallback((isop: string) => {
             if (rec.end_date > end_date) end_date = rec.end_date;
         }
 
-        result.push({
-            start_date,
-            end_date,
-            party1_iso: Array.from(party1Set),
-            party2_iso: Array.from(party2Set),
-            death_toll: deathTollSum.toString(),
-            place,
-        });
+        // result.push({
+        //     start_date,
+        //     end_date,
+        //     party1_iso: Array.from(party1Set),
+        //     party2_iso: Array.from(party2Set),
+        //     death_toll: deathTollSum.toString(),
+        //     place,
+        // });
     }
 
     return result;
@@ -122,7 +122,16 @@ const getData = useCallback((isop: string) => {
             header: true,
             download: true,
             complete: (results) => {
-                const data = results.data.filter((record) => parseInt(record.start_date.substring(0,4)) <= year && parseInt(record.end_date.substring(0,4)) >= year);
+                const data = results.data.filter((record) => {
+                    try  {
+                        const erm = parseInt(record.start_date.substring(0,4));
+                        const erm2 = parseInt(record.end_date.substring(0,4));
+                    } catch {
+                        console.log("error parsing date for record", record);
+                        return false;
+                    }
+                    return (parseInt(record.start_date.substring(0,4)) <= year && parseInt(record.end_date.substring(0,4)) >= year) ?? false;
+                })
                 setGeoData(data);
             }
         });
