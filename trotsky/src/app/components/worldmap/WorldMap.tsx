@@ -20,15 +20,11 @@ import { Return } from "three/examples/jsm/transpiler/AST.js";
 
 type ConflictRecord = {conflict_id: string; start_date: string; end_date: string; party1_iso: string; party2_iso: string; death_toll: string; place: string; };
 type ReturnConflictRecord = {conflict_id: string; start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; }[];
+type ReturnConflictRecordSingle = {conflict_id: string; start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; };
 const bounds = new L.LatLngBounds(
   [-110, -200], // Southwest corner of the world
   [110, 200]  // Northeast
 );
-
-type CountryObject = {
-    iso: string;
-    data: (iso: string) => ReturnConflictRecord | undefined;
-}
 
 
 
@@ -55,40 +51,32 @@ const getData = useCallback((isop: string) => {
     const placeData = geoData.filter(record => record.place.replace(",", '') === isop);
     if (placeData.length === 0) return [];
     console.log("placeData", placeData);
+    let idList: string[] = [];
 
-    // Group by start_date
-    const grouped: { [date: string]: ConflictRecord[] } = {};
-    for (const record of placeData) {
-        if (!grouped[record.start_date]) grouped[record.start_date] = [];
-        grouped[record.start_date].push(record);
+    for (const record of placeData) {   
+        idList.push(record.conflict_id);
     }
-
+    idList = [...new Set(idList)];
     const result: ReturnConflictRecord = [];
-    for (const start_date in grouped) {
-        const group = grouped[start_date];
-        const party1Set = new Set<string>();
-        const party2Set = new Set<string>();
+
+    for (const id of idList) {
+        const wars = placeData.filter(record => record.conflict_id === id);
+        const returnWar: ReturnConflictRecordSingle = {start_date: wars[0].start_date, end_date: wars[0].end_date, party1_iso: [], party2_iso: [], death_toll: "", place: wars[0].place, conflict_id: id};
+        const isoaSet: Set<string> = new Set();
+        const isobSet: Set<string> = new Set();
         let deathTollSum = 0;
-        let end_date = group[0].end_date;
-        let place = group[0].place;
-
-        for (const rec of group) {
-            party1Set.add(rec.party1_iso);
-            party2Set.add(rec.party2_iso);
-            deathTollSum += parseInt(rec.death_toll) || 0;
-            if (rec.end_date > end_date) end_date = rec.end_date;
+        for (const war of wars) {
+            deathTollSum += parseInt(war.death_toll) || 0;
+            const party1isos = war.party1_iso.split(",").map(s => s.trim());
+            const party2isos = war.party2_iso.split(",").map(s => s.trim());
+            party1isos.forEach(iso => isoaSet.add(iso));
+            party2isos.forEach(iso => isobSet.add(iso));
         }
-
-        // result.push({
-        //     start_date,
-        //     end_date,
-        //     party1_iso: Array.from(party1Set),
-        //     party2_iso: Array.from(party2Set),
-        //     death_toll: deathTollSum.toString(),
-        //     place,
-        // });
+        returnWar.party1_iso = Array.from(isoaSet);
+        returnWar.party2_iso = Array.from(isobSet);
+        returnWar.death_toll = deathTollSum.toString();
+        result.push(returnWar);
     }
-
     return result;
     }, [geoData]);
 
@@ -127,7 +115,6 @@ const getData = useCallback((isop: string) => {
                         const erm = parseInt(record.start_date.substring(0,4));
                         const erm2 = parseInt(record.end_date.substring(0,4));
                     } catch {
-                        console.log("error parsing date for record", record);
                         return false;
                     }
                     return (parseInt(record.start_date.substring(0,4)) <= year && parseInt(record.end_date.substring(0,4)) >= year) ?? false;
@@ -136,8 +123,6 @@ const getData = useCallback((isop: string) => {
             }
         });
     }, []);
-
-    console.log("geoData", geoData);
 
         
 
@@ -242,7 +227,7 @@ const getData = useCallback((isop: string) => {
                             zIndex: 1000,
                             pointerEvents: 'none',
                             background: 'rgba(0,0,0,0.2)',
-                            backdropFilter: 'blur(4px)',
+                            backdropFilter: 'blur(3px)',
                         }}
                     />
                 )}

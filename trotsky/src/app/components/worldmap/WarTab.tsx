@@ -270,9 +270,9 @@ function formatDateToNameVersion(dateString: string): string {
 const WarTab: React.FC<WarTabProps> = ({ conflictData }) => {
     return (
         <div className="flex flex-col !p-2">
-        <div className="flex gap-4 ">
-            <div className="flex gap-1 flex-col ">
-                <div className="font-bold text-[17px] text-[#e7e9ec]">Side A:</div>
+        <div className="flex gap-4 justify-between">
+            <div className="flex gap-1 flex-col max-w-[45%]">
+                <div className="para font-bold text-[17px] text-[#e7e9ec]">Side A:</div>
                 <div className="flex flex-col gap-2">
                     {conflictData.party1_iso.map((party1_iso) => {
                         const isCountryName = isotocountryname[party1_iso];
@@ -285,13 +285,13 @@ const WarTab: React.FC<WarTabProps> = ({ conflictData }) => {
                                 height={24}
                                 className="rounded-[3px] !mr-2 "
                             />}
-                            <span className="text-[#e7e9ec] text-[13px]">{countryName}</span>
+                            <span className="text-[#e7e9ec] text-[13px] para">{countryName}</span>
                         </div>)
                     })}
                 </div>
             </div>
-            <div className="flex gap-1 flex-col ">
-                <div className="font-bold text-[17px] text-[#e7e9ec]">Side B:</div>
+            <div className="flex gap-1 flex-col max-w-[45%]">
+                <div className="font-bold text-[17px] text-[#e7e9ec] para">Side B:</div>
                 <div className="flex flex-col gap-2">
                     {conflictData.party2_iso.map((party2_iso) => {
                         const isCountryName = isotocountryname[party2_iso];
@@ -304,7 +304,7 @@ const WarTab: React.FC<WarTabProps> = ({ conflictData }) => {
                                 height={24}
                                 className="rounded-[3px] !mr-2 "
                             />}
-                            <span className="text-[#e7e9ec] text-[13px]">{countryName}</span>
+                            <span className="text-[#e7e9ec] text-[13px] para">{countryName}</span>
                         </div>)
                     })}
                 </div>

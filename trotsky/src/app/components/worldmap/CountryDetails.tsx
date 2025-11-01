@@ -32,7 +32,7 @@ const CountryDetails: React.FC<{iso: string; getData: (iso: string) => ReturnCon
         onStart={handleStart}
       >
         <div ref={nodeRef} className='w-[275px] h-[400px] !z-[99999999999999999] '>
-        <div  className='static w-[275px] h-[400px] bg-black flex flex-col p-4 rounded-[12px] shadow-xl shadow-[#F2613F]/30 hover:shadow-[#F2613F]  active:shadow-[#F2613F] ease-in duration-200 ' >
+        <div  className='static w-[275px] h-[400px] bg-black flex flex-col p-4 rounded-[12px] shadow-xl shadow-[#F2613F]/30 hover:shadow-[#F2613F]  active:shadow-[#F2613F] ease-in duration-200 overflow-y-auto' >
           <Circles />
           <div className='overflow-y-auto max-h-[300px]'>
           {countryList.map((conflict, index) => (
@@ -40,7 +40,7 @@ const CountryDetails: React.FC<{iso: string; getData: (iso: string) => ReturnCon
           ))}
           </div>
         </div>
-        </div>
+              </div>
       </Draggable>
   );
 };
