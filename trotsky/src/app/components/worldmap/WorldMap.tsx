@@ -32,7 +32,7 @@ const bounds = new L.LatLngBounds(
 const WorldMap: React.FC<{}> = () => {
     const [geoJsonData, setgeoJsonData] = useState(null!);
     const [geoData, setGeoData] = useState<ConflictRecord[]>([]);
-    const [year, setYear] = useState(1960);
+    const [year, setYear] = useState(2022);
     const [isoOfCountry, setCountryData] = useState<string>("");
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
     const [overlayInfo, setOverlayInfo] = useState<{ 

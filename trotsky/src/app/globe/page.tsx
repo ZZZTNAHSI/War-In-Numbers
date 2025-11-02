@@ -3,7 +3,8 @@
 import CountryDetails from "../components/worldmap/CountryDetails";
 import WarTab from "../components/worldmap/WarTab";
 import WorldMapWrapper from "../components/worldmap/WorldMapWrapper";
-import "../globals.css";
+import "./globals.css";
+import Slider from "../components/worldmap/Slider";
 
 export default function GlobeHome() {
     const getData = () => 
@@ -158,8 +159,9 @@ export default function GlobeHome() {
     
 
     return (
-    <div className="flex flex-col items-center justify-center !m-[250px]">
+    <div className="flex flex-col items-center justify-center !m-[200px]">
         <WorldMapWrapper />
+        <Slider />
     </div>
 
     );
