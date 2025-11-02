@@ -11,6 +11,20 @@
 
 }
 
+.scroll-box {
+    scrollbar-width: thin;
+    scrollbar-color: #F2613F transparent;
+
+}
+
+.scroll-box::-webkit-scrollbar {
+    background-color: transparent;
+}
+
+.scroll-box::-webkit-scrollbar:hover {
+    background-color: #F2613F;
+}
+
 .para {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
