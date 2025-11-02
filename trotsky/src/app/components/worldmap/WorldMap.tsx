@@ -14,8 +14,11 @@ import { GeoJSONOptions, Layer} from "leaflet";
 import { Geometry, Feature } from "geojson";
 import { geoPath, geoMercator } from "d3-geo";
 import CountryOverlay from "./CountryOverlay";
-import {motion} from "framer-motion";
-import { Return } from "three/examples/jsm/transpiler/AST.js";
+import {AnimatePresence, motion} from "framer-motion";
+import Slider from "./Slider";
+import Header from "./Header";
+import HiddenText from "./HiddenText";
+
 
 
 type ConflictRecord = {conflict_id: string; start_date: string; end_date: string; party1_iso: string; party2_iso: string; death_toll: string; place: string; };
@@ -32,7 +35,7 @@ const bounds = new L.LatLngBounds(
 const WorldMap: React.FC<{}> = () => {
     const [geoJsonData, setgeoJsonData] = useState(null!);
     const [geoData, setGeoData] = useState<ConflictRecord[]>([]);
-    const [year, setYear] = useState(2022);
+    const [year, setYear] = useState(1969);
     const [isoOfCountry, setCountryData] = useState<string>("");
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
     const [overlayInfo, setOverlayInfo] = useState<{ 
@@ -47,10 +50,13 @@ const WorldMap: React.FC<{}> = () => {
         fillColor: string;
     } | null>(null);
 
+const onChangeYear = (e: number) => {
+    setYear(e);
+};
+
 const getData = useCallback((isop: string) => {
     const placeData = geoData.filter(record => record.place.replace(",", '') === isop);
     if (placeData.length === 0) return [];
-    console.log("placeData", placeData);
     let idList: string[] = [];
 
     for (const record of placeData) {   
@@ -80,24 +86,19 @@ const getData = useCallback((isop: string) => {
     return result;
     }, [geoData]);
 
+    const ids = geoData.map(record => record.conflict_id);
+    const uniqueIds = [...new Set(ids)];
 
 
 
-    let highestDeathToll: number | number[] = geoData.map((record) => {
-        const startDate = record.start_date;
-        const instance = geoData.filter((r) => r.start_date === startDate);
+
+    const deathToll: number | number[] = uniqueIds.map((id) => {
+        const instance = geoData.filter((r) => r.conflict_id === id);
         const totalDeathToll = instance.reduce((sum, r) => sum + (parseInt(r.death_toll) || 0), 0);
         return totalDeathToll;
     });
-    highestDeathToll= Math.max(...highestDeathToll);
-    let lowestDeathToll: number | number[] = geoData.map((record) => {
-        const startDate = record.start_date;
-        const instance = geoData.filter((r) => r.start_date === startDate);
-        const totalDeathToll = instance.reduce((sum, r) => sum + (parseInt(r.death_toll) || 0), 0);
-        return totalDeathToll;
-    });
-    lowestDeathToll = Math.min(...lowestDeathToll);
-
+    const highestDeathToll= Math.max(...deathToll);
+    const lowestDeathToll = Math.min(...deathToll);
     const colorScale = scaleLinear<string>().domain([lowestDeathToll, highestDeathToll]).range(["#FFCCCB", "#8B0000"]);
 
 
@@ -122,13 +123,12 @@ const getData = useCallback((isop: string) => {
                 setGeoData(data);
             }
         });
-    }, []);
+    }, [year]);
 
         
 
         const style: L.StyleFunction = (feature) : L.PathOptions => {
             const iso = feature?.properties?.iso_a2;
-            // this is .includes, some iso's have commas which results in some places not having color when clicked on. 
             const placeData = geoData.filter((record) => record.place.replace(",",'') === (iso));
 
             const death = placeData.reduce((sum, record) => sum + (parseInt(record.death_toll) || 0), 0);
@@ -139,8 +139,6 @@ const getData = useCallback((isop: string) => {
             opacity: 1,
             fillOpacity: 1,
             color: '#F2613F',
-            
-            
         };
     }
 
@@ -214,6 +212,8 @@ const getData = useCallback((isop: string) => {
     }
 
     return (
+    <div className="flex flex-col items-center justify-center !m-[200px]">
+        <Header year={year} />
         <Suspense>
             <div style={{ position: 'relative' }}>
                 {overlayInfo && (
@@ -268,7 +268,22 @@ const getData = useCallback((isop: string) => {
                 ) : null}
             </div>
         </Suspense>
+        <Slider onChange={onChangeYear} year={year} />
+        <AnimatePresence mode="sync">
+        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Conflicts before 1989 become more innacurate inaccurate</motion.p>}
+                <motion.p layout key={2} className="text-[#808080] items-center !mt-5 !mb-5">To be classified as a conflict, there has to be a conflict with 2 sides which sustained more than 25 battle deaths. Some sides are not included, for example the Russian annexation of Crimea doesn't include Russia as a party member of the war because they sustained less than 25 deaths due to war. </motion.p>
+        <motion.p layout key={3} className="text-[#808080] items-center !mt-5">
+Sources: 
+• Davies, S., Pettersson, T., Sollenberg, M., & Öberg, M. (2025). Organized violence 1989-2024, and the challenges of identifying civilian victims. Journal of Peace Research, 62(4).
+• Gleditsch, Nils Petter, Peter Wallensteen, Mikael Eriksson, Margareta Sollenberg, and Håvard Strand (2002) Armed Conflict 1946-2001: A New Dataset. Journal of Peace Research 39(5).
+• UCDP is part of and funded by DEMSCORE, national research infrastructure grant 2021-00162 from the Swedish Research Council.
+• Davies, S., Pettersson, T., Sollenberg, M., & Öberg, M. (2025). Organized violence 1989-2024, and the challenges of identifying civilian victims. Journal of Peace Research, 62(4).
+
+</motion.p>
+</AnimatePresence>
+    </div>
     )
 }
 
 export default WorldMap;
+
