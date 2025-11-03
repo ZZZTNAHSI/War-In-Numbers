@@ -4,7 +4,7 @@ import "leaflet-defaulticon-compatibility"
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css"
 import "./map.css"
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from "react-leaflet";
-import { Suspense, useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback, useRef, use, Key } from "react";
 import * as Papa from "papaparse";
 import * as L from "leaflet";
 import {scaleLinear, scaleLog} from "d3";
@@ -18,12 +18,14 @@ import {AnimatePresence, motion} from "framer-motion";
 import Slider from "./Slider";
 import Header from "./Header";
 import HiddenText from "./HiddenText";
+import { get } from "http";
 
 
 
 type ConflictRecord = {conflict_id: string; start_date: string; end_date: string; party1_iso: string; party2_iso: string; death_toll: string; place: string; };
 type ReturnConflictRecord = {conflict_id: string; start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; }[];
 type ReturnConflictRecordSingle = {conflict_id: string; start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; };
+type isoAndColorJank = {iso: string, fillColor: string}
 const bounds = new L.LatLngBounds(
   [-110, -200], // Southwest corner of the world
   [110, 200]  // Northeast
@@ -36,8 +38,9 @@ const WorldMap: React.FC<{}> = () => {
     const [geoJsonData, setgeoJsonData] = useState(null!);
     const [geoData, setGeoData] = useState<ConflictRecord[]>([]);
     const [year, setYear] = useState(2000);
-    const [isoOfCountry, setCountryData] = useState<string>("");
+    const [isoOfCountry, setCountryData] = useState<isoAndColorJank>({iso: "", fillColor: ""});
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
+    const yearRef = useRef<number>(year);
     const [overlayInfo, setOverlayInfo] = useState<{ 
         d: string; 
         matrix: string;
@@ -51,8 +54,12 @@ const WorldMap: React.FC<{}> = () => {
     } | null>(null);
 
 const onChangeYear = (e: number) => {
-    setYear(e);
+    setYear(() => e);
 };
+
+useEffect(() => {
+    yearRef.current = year;
+}, [year]);
 
 const getData = useCallback((isop: string) => {
     const placeData = geoData.filter(record => record.place.replace(",", '') === isop);
@@ -91,15 +98,13 @@ const getData = useCallback((isop: string) => {
 
 
 
-
     const deathToll: number | number[] = uniqueIds.map((id) => {
         const instance = geoData.filter((r) => r.conflict_id === id);
         const totalDeathToll = instance.reduce((sum, r) => sum + (parseInt(r.death_toll) || 0), 0);
         return totalDeathToll;
     });
     const highestDeathToll= Math.max(...deathToll);
-    const lowestDeathToll = Math.min(...deathToll);
-    const colorScale = scaleLinear<string>().domain([lowestDeathToll, highestDeathToll]).range(["#FFCCCB", "#8B0000"]);
+    const colorScale = scaleLinear<string>().domain([1, highestDeathToll + 10000]).range(["#FFCCCB", "#8B0000"]);
 
 
 
@@ -125,14 +130,18 @@ const getData = useCallback((isop: string) => {
         });
     }, [year]);
 
-        
+
+
 
         const style: L.StyleFunction = (feature) : L.PathOptions => {
             const iso = feature?.properties?.iso_a2;
-            const placeData = geoData.filter((record) => record.place.replace(",",'') === (iso));
-
+            const placeData = geoData.filter((record) => record.place.split(",")[0] === (iso));
             const death = placeData.reduce((sum, record) => sum + (parseInt(record.death_toll) || 0), 0);
             const color = death > 0 ? colorScale(death) : "#000000";
+            if (iso == "IQ") {
+                console.log("death on function call: ", death);
+            }
+            // Only update fillColor if overlayInfo is not null and all required fields are present
         return {
             fillColor: color,
             weight: 1,
@@ -145,19 +154,21 @@ const getData = useCallback((isop: string) => {
  
 
     const onEachFeature = (feature: Feature, layer: Layer) => {
-        const iso = feature?.properties?.iso_a2;
-        // if there is no iso it will .innclude all terriroties including the letters
-        const placeData = geoData.filter((record) => record.place.replace(",",'') === (iso));
-        const death = placeData.reduce((sum, record) => sum + (parseInt(record.death_toll) || 0), 0);
-        const fillColor = death > 0 ? colorScale(death) : "#000000";
+        
 
         layer.addEventListener("click", () => {
+
             if (!mapRef) return;
+            const iso = feature?.properties?.iso_a2;
+            const placeData = geoData.filter((record) => record.place.split(",")[0] === (iso));
+            const death = placeData.reduce((sum, record) => sum + (parseInt(record.death_toll) || 0), 0);
+            const fillColor = death > 0 ? colorScale(death) : "#000000";
             // zoom so the country fills the screen
             const bounds = (layer as any).getBounds?.();
             if (bounds) {
                 mapRef.fitBounds(bounds, { padding: [40, 40], maxZoom: 6});
             }
+            console.log("color on click: ",fillColor);
 
             
 
@@ -195,7 +206,7 @@ const getData = useCallback((isop: string) => {
                 }
 
                 const d = pathEl.getAttribute('d') ?? '';
-                setCountryData(() => iso);
+                setCountryData(() => {return {iso: iso, fillColor: fillColor}});
                 setOverlayInfo({ d, matrix: matrixStr, dimensions, fillColor });
                 
 
@@ -205,7 +216,7 @@ const getData = useCallback((isop: string) => {
     }
     const handleCloseDetails = () => {
         setOverlayInfo(null);
-        setCountryData("");
+        setCountryData({iso: "", fillColor: ""});
         if (mapRef) {
             mapRef.setView([40, 0], 2);
         }
@@ -226,7 +237,7 @@ const getData = useCallback((isop: string) => {
                             height: '100%',
                             zIndex: 1000,
                             pointerEvents: 'none',
-                            background: 'rgba(0,0,0,0.2)',
+                            background: 'rgba(0,0,0,0.8)',
                             backdropFilter: 'blur(3px)',
                         }}
                     />
@@ -245,17 +256,17 @@ const getData = useCallback((isop: string) => {
                             style={{ height: "750px", width: "1300px", backgroundColor: "black" }} 
                         >
                             {geoJsonData && <>
-                                <GeoJSON style={style} onEachFeature={onEachFeature} data={geoJsonData}/>
+                                <GeoJSON key={yearRef.current as unknown as Key}  style={style} onEachFeature={onEachFeature} data={geoJsonData}/>
                             </>}
                             {(geoJsonData && !overlayInfo) ? <MapButtons /> : null}
                         </MapContainer>
                     </div>
                 </motion.div>
-                {overlayInfo && mapRef ? (
+                {overlayInfo?.d && mapRef ? (
                     <>
                     <div className="!z-[99999999] absolute h-[750px] w-[1300px] top-0 left-0">
                         
-                        <CountryDetails getData={getData} iso={isoOfCountry}  />
+                        <CountryDetails getData={getData} iso={isoOfCountry.iso}  />
                     </div>
                     
                     <CountryOverlay
@@ -270,7 +281,7 @@ const getData = useCallback((isop: string) => {
         </Suspense>
         <Slider onChange={onChangeYear} year={year} />
         <AnimatePresence mode="sync">
-        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Conflicts before 1989 become more innacurate inaccurate</motion.p>}
+        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Conflicts before 1989 become more innacurate</motion.p>}
                 <motion.p layout key={2} className="text-[#808080] items-center !mt-5 !mb-5">To be classified as a conflict, there has to be a conflict with 2 sides which sustained more than 25 battle deaths. Some sides are not included, for example the Russian annexation of Crimea doesn't include Russia as a party member of the war because they sustained less than 25 deaths due to war. </motion.p>
         <motion.p layout key={3} className="text-[#808080] items-center !mt-5">
 Sources: 
