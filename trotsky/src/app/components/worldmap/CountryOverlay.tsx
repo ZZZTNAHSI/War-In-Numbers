@@ -48,7 +48,7 @@ function CountryOverlay({ info, container, onClose, fillColor }: { info: Overlay
           }}
         />
       </svg>
-      <button onClick={onClose} style={{ position: 'absolute', right: 12, top: 12, zIndex: 1210, background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}>✕</button>
+      <button onClick={onClose} style={{ position: 'absolute', right: 36, top: 36, zIndex: 1210, background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}>✕</button>
     </div>,
     container
   );

@@ -279,10 +279,10 @@ const CountryDetails: React.FC<{iso: string; getData: (iso: string) => ReturnCon
         onStart={handleStart}
       >
         <div ref={nodeRef} className='w-[275px] h-[400px] !z-[99999999999999999] '>
-        <div  className='static w-[275px] h-[400px] bg-black flex flex-col p-4 rounded-[12px] shadow-xl shadow-[#F2613F]/30 hover:shadow-[#F2613F]  active:shadow-[#F2613F] ease-in duration-200 overflow-y-auto' >
+        <div  className='static w-[275px] h-[400px] bg-black flex flex-col p-4 rounded-[12px] shadow-xl shadow-[#000000]/30 hover:shadow-[#000000]/70  active:shadow-[#000000]/70 ease-in duration-200 overflow-y-auto' >
           <Circles />
           <div className='overflow-y-auto max-h-[300px] scroll-box'>
-            <p className='flex !my-[5px]  justify-center w-full h-[35px] items-center text-center text-[#F2613F] title text-[30px] '>{isotocountryname[iso]}</p>
+            <p className='flex !my-[5px]  justify-center w-full h-[35px] items-center text-center text-[#F2613F] title text-[25px] '>{isotocountryname[iso]}</p>
             <div className="bg-[#F2613F] w-full h-[4px]"/>
 
           {countryList.map((conflict, index) => (

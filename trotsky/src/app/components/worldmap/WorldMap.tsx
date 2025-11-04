@@ -253,7 +253,7 @@ const getData = useCallback((isop: string) => {
                             minZoom={2} 
                             zoom={2} 
                             scrollWheelZoom={false} 
-                            style={{ height: "750px", width: "1300px", backgroundColor: "black" }} 
+                            style={{ height: "650px", width: "1150px", backgroundColor: "black" }} 
                         >
                             {geoJsonData && <>
                                 <GeoJSON key={yearRef.current as unknown as Key}  style={style} onEachFeature={onEachFeature} data={geoJsonData}/>
@@ -264,7 +264,7 @@ const getData = useCallback((isop: string) => {
                 </motion.div>
                 {overlayInfo?.d && mapRef ? (
                     <>
-                    <div className="!z-[99999999] absolute h-[750px] w-[1300px] top-0 left-0">
+                    <div className="!z-[99999999] absolute h-[650px] w-[1150px] top-0 left-0">
                         
                         <CountryDetails getData={getData} iso={isoOfCountry.iso}  />
                     </div>
@@ -284,7 +284,7 @@ const getData = useCallback((isop: string) => {
         {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Conflicts before 1989 become more innacurate</motion.p>}
                 <motion.p layout key={2} className="text-[#808080] items-center !mt-5 !mb-5">To be classified as a conflict, there has to be a conflict with 2 sides which sustained more than 25 battle deaths. Some sides are not included, for example the Russian annexation of Crimea doesn't include Russia as a party member of the war because they sustained less than 25 deaths due to war. </motion.p>
         <motion.p layout key={3} className="text-[#808080] items-center !mt-5">
-Sources: 
+Sources: {"\n"}
 • Davies, S., Pettersson, T., Sollenberg, M., & Öberg, M. (2025). Organized violence 1989-2024, and the challenges of identifying civilian victims. Journal of Peace Research, 62(4).
 • Gleditsch, Nils Petter, Peter Wallensteen, Mikael Eriksson, Margareta Sollenberg, and Håvard Strand (2002) Armed Conflict 1946-2001: A New Dataset. Journal of Peace Research 39(5).
 • UCDP is part of and funded by DEMSCORE, national research infrastructure grant 2021-00162 from the Swedish Research Council.
