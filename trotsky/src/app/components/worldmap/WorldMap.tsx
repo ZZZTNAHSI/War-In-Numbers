@@ -281,7 +281,8 @@ const getData = useCallback((isop: string) => {
         </Suspense>
         <Slider onChange={onChangeYear} year={year} />
         <AnimatePresence mode="sync">
-        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Conflicts before 1989 become more innacurate</motion.p>}
+        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Conflicts that ended before 1989 are not be included on the map.</motion.p>}
+        {year > 2019 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Ongoing and recent wars death counts have varying degrees of accuracy. Wars that have ended recently will also be innacurate.</motion.p>}
                 <motion.p layout key={2} className="text-[#808080] items-center !mt-5 !mb-5">To be classified as a conflict, there has to be a conflict with 2 sides which sustained more than 25 battle deaths. Some sides are not included, for example the Russian annexation of Crimea doesn't include Russia as a party member of the war because they sustained less than 25 deaths due to war. </motion.p>
         <motion.p layout key={3} className="text-[#808080] items-center !mt-5">
 Sources: {"\n"}

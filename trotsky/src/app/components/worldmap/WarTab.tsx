@@ -315,7 +315,7 @@ const WarTab: React.FC<WarTabProps> = ({ conflictData }) => {
             Death Toll: {conflictData.death_toll}
         </div>
         <div className="text-[13px] text-[#cbd1d8] ">
-            From {formatDateToNameVersion(conflictData.start_date)} to {formatDateToNameVersion(conflictData.end_date)}
+            From {formatDateToNameVersion(conflictData.start_date)} to {(conflictData.end_date === "2025-11-02" ? "now.": formatDateToNameVersion(conflictData.end_date) + ".")}
         </div>
         <div className="bg-[#F2613F] w-ful h-[3px] !my-2"/>
         </div>

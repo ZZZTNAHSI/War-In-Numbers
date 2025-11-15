@@ -5,12 +5,12 @@ const Slider: React.FC<{ onChange: (year: number) => void; year: number }> = ({ 
             <input
                 type="range"
                 min="1947"
-                max="2022"
+                max="2025"
                 className="w-[90%] h-2  border-[#F2613F]  border-1 rounded-lg appearance-none cursor-pointer  accent-[#F2613F]"
                 value={year}
                 onChange={(e) => onChange(Number(e.target.value))}
             />
-            <p className="title text-[#F2613F] text-[55px] !p-2 !ml-[20px]">2022</p>
+            <p className="title text-[#F2613F] text-[55px] !p-2 !ml-[20px]">2025</p>
         </div>
     );
 };

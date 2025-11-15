@@ -10,7 +10,6 @@ const Header: React.FC<{}> = () => {
             </Link>
             <div className="flex gap-2">
                 <HeaderButton text="Globe" link="/globe" />
-                <HeaderButton text="Graph" link="/graph" />
             </div>
         </header>
     </>);

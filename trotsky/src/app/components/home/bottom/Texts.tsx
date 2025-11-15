@@ -82,9 +82,6 @@ const Texts: React.FC<{}> = ({}) => {
                         <BigButton text="Globe" link="/globe" img='/FakeGlobe.jpg' text2="See the development of wars throughout the years"/>
                     </motion.div>
                     <div className="!my-10"/>
-                    <motion.div  className="!z-[11]" variants={VariantsButton}  >
-                        <BigButton text="Graph" link="/graph" img='/KINGSOLOMON.jpg' text2="Click here to enter the main website"/>
-                    </motion.div>
                     </motion.div>
                 }
                 </AnimatePresence>

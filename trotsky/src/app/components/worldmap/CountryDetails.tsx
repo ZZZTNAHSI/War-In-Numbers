@@ -1,9 +1,10 @@
 "use client";
-import React, { Key, useCallback, useRef } from 'react';
+import React, { Key, useCallback, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import WarTab from './WarTab';
 import Circles from './Circles';
 import {motion} from 'framer-motion';
+
 
 type ReturnConflictRecord = { start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; }[];
 const isotocountryname: { [key: string]: string } = {
@@ -258,11 +259,13 @@ const isotocountryname: { [key: string]: string } = {
 
 
 
-
+// w-[275px] h-[400px]
+// h-75 w-275
 
 const CountryDetails: React.FC<{iso: string; getData: (iso: string) => ReturnConflictRecord}> = ({iso, getData}) => {
   const countryList = getData(iso);
   if (!countryList) return null;
+  const [isClick, setIsClick] = useState(false);
   
   
   const nodeRef = useRef(null);
@@ -278,19 +281,24 @@ const CountryDetails: React.FC<{iso: string; getData: (iso: string) => ReturnCon
         bounds="parent"
         onStart={handleStart}
       >
-        <div ref={nodeRef} className='w-[275px] h-[400px] !z-[99999999999999999] '>
-        <div  className='static w-[275px] h-[400px] bg-black flex flex-col p-4 rounded-[12px] shadow-xl shadow-[#000000]/30 hover:shadow-[#000000]/70  active:shadow-[#000000]/70 ease-in duration-200 overflow-y-auto' >
+        <motion.div ref={nodeRef} style={{height: (isClick ? "400px" : "75px")}} className='w-[275px]  !z-[99999999999999999] overflow-x-hidden'>
+        <motion.div style={{height: (isClick ? "400px" : "75px")}} className='static w-[275px] overflow-x-hidden bg-black flex flex-col p-4 border-[#F2613F] border rounded-[12px] shadow-xl shadow-[#000000]/30 hover:shadow-[#000000]/70  active:shadow-[#000000]/70 ease-in duration-200 overflow-y-auto' >
+          {isClick && <>
           <Circles />
-          <div className='overflow-y-auto max-h-[300px] scroll-box'>
+          <div className='overflow-y-auto  max-h-[300px] scroll-box'>
             <p className='flex !my-[5px]  justify-center w-full h-[35px] items-center text-center text-[#F2613F] title text-[25px] '>{isotocountryname[iso]}</p>
             <div className="bg-[#F2613F] w-full h-[4px]"/>
 
           {countryList.map((conflict, index) => (
             <WarTab key={index} conflictData={conflict} />
           ))}
+
           </div>
-        </div>
-              </div>
+          <p onClick={() => setIsClick((prev) => !prev)} className='handle !mt-2 rounded-[12px]  h-max w-full text-center justify-center items-center flex text-[#F2613F]'>&#8963;</p>
+          </>}
+          {!isClick && <p onClick={() => setIsClick((prev) => !prev)} className='handle rounded-[12px]  h-full w-full text-center justify-center items-center flex text-[#F2613F]'><span className='text-inherit scale-x-150'>&#8964;</span></p>}
+        </motion.div>
+        </motion.div>
       </Draggable>
   );
 };
