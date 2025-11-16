@@ -24,7 +24,7 @@ const Top: React.FC<{}> =  ({}) => {
 
       timeout = setTimeout(() => {
         setIsIdle(true);
-      }, 1000);
+      }, 5000);
     };
 
     // Add scroll listener
