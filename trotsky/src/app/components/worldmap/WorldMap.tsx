@@ -4,7 +4,7 @@ import "leaflet-defaulticon-compatibility"
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css"
 import "./map.css"
 import { MapContainer, GeoJSON } from "react-leaflet";
-import { Suspense, useEffect, useState, useCallback, useRef, use, Key } from "react";
+import { useEffect, useState, useCallback, useRef, use, Key } from "react";
 import * as Papa from "papaparse";
 import * as L from "leaflet";
 import {scaleLinear} from "d3";
