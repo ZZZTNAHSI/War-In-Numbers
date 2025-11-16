@@ -279,19 +279,21 @@ const getData = useCallback((isop: string) => {
                 ) : null}
             </div>
         <Slider onChange={onChangeYear} year={year} />
+        <div className="text-center">
         <AnimatePresence mode="sync">
-        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080]  ">Conflicts that ended before 1989 are not be included on the map.</motion.p>}
-        {year > 2019 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={4} className="text-[#808080]  ">Ongoing and recent wars death counts have varying degrees of accuracy. Wars that have ended recently will also be innacurate.</motion.p>}
-                <motion.p layout key={2} className="text-[#808080]  !mt-5 !mb-5">To be classified as a conflict, there has to be a conflict with 2 sides which sustained more than 25 battle deaths. Some sides are not included, for example the Russian annexation of Crimea doesn't include Russia as a party member of the war because they sustained less than 25 deaths due to war. </motion.p>
+        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080]  ">Conflicts that ended before 1989 are not included on the map.</motion.p>}
+        {year > 2019 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={4} className="text-[#808080] ">Ongoing and recent wars death counts have varying degrees of accuracy. Wars that have ended recently will also be innacurate.</motion.p>}
+        <motion.p layout key={22} className="text-[#808080]  !mt-5 ">Click on a country to see its details.</motion.p>
+        <motion.p layout key={2} className="text-[#808080]  !mt-5">To be classified as a conflict, there has to be a conflict with 2 sides which sustained more than 25 battle deaths. Some sides are not included, for example the Russian annexation of Crimea doesn't include Russia as a party member of the war because they sustained less than 25 deaths due to war. </motion.p>
         <motion.p layout key={3} className="text-[#808080]  !mt-5">
 Sources: {"\n"}
 • Davies, S., Pettersson, T., Sollenberg, M., & Öberg, M. (2025). Organized violence 1989-2024, and the challenges of identifying civilian victims. Journal of Peace Research, 62(4).
 • Gleditsch, Nils Petter, Peter Wallensteen, Mikael Eriksson, Margareta Sollenberg, and Håvard Strand (2002) Armed Conflict 1946-2001: A New Dataset. Journal of Peace Research 39(5).
 • UCDP is part of and funded by DEMSCORE, national research infrastructure grant 2021-00162 from the Swedish Research Council.
 • Davies, S., Pettersson, T., Sollenberg, M., & Öberg, M. (2025). Organized violence 1989-2024, and the challenges of identifying civilian victims. Journal of Peace Research, 62(4).
-
 </motion.p>
 </AnimatePresence>
+</div>
     </div>
     )
 }
