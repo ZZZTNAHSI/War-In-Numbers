@@ -8,6 +8,7 @@ export default function WorldMapWrapper() {
     });
     return (<>
     <WorldMap />
+
     <div className="!mb-[-700px]"/>
     
     </>

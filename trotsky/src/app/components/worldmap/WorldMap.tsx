@@ -3,22 +3,21 @@ import "leaflet/dist/leaflet.css"
 import "leaflet-defaulticon-compatibility"
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css"
 import "./map.css"
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from "react-leaflet";
+import { MapContainer, GeoJSON } from "react-leaflet";
 import { Suspense, useEffect, useState, useCallback, useRef, use, Key } from "react";
 import * as Papa from "papaparse";
 import * as L from "leaflet";
-import {scaleLinear, scaleLog} from "d3";
+import {scaleLinear} from "d3";
 import MapButtons from "./MapButtons";
 import CountryDetails from "./CountryDetails";
-import { GeoJSONOptions, Layer} from "leaflet";
-import { Geometry, Feature } from "geojson";
-import { geoPath, geoMercator } from "d3-geo";
+import {Layer} from "leaflet";
+import { Feature } from "geojson";
 import CountryOverlay from "./CountryOverlay";
 import {AnimatePresence, motion} from "framer-motion";
 import Slider from "./Slider";
 import Header from "./Header";
-import HiddenText from "./HiddenText";
-import { get } from "http";
+
+
 
 
 
@@ -27,8 +26,8 @@ type ReturnConflictRecord = {conflict_id: string; start_date: string; end_date: 
 type ReturnConflictRecordSingle = {conflict_id: string; start_date: string; end_date: string; party1_iso: string[]; party2_iso: string[]; death_toll: string; place: string; };
 type isoAndColorJank = {iso: string, fillColor: string}
 const bounds = new L.LatLngBounds(
-  [-110, -200], // Southwest corner of the world
-  [110, 200]  // Northeast
+  [-110, -200], 
+  [110, 200]  
 );
 
 
@@ -37,10 +36,12 @@ const bounds = new L.LatLngBounds(
 const WorldMap: React.FC<{}> = () => {
     const [geoJsonData, setgeoJsonData] = useState(null!);
     const [geoData, setGeoData] = useState<ConflictRecord[]>([]);
-    const [year, setYear] = useState(2000);
+    const [year, setYear] = useState(2025);
     const [isoOfCountry, setCountryData] = useState<isoAndColorJank>({iso: "", fillColor: ""});
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
     const yearRef = useRef<number>(year);
+    
+
     const [overlayInfo, setOverlayInfo] = useState<{ 
         d: string; 
         matrix: string;
@@ -138,10 +139,6 @@ const getData = useCallback((isop: string) => {
             const placeData = geoData.filter((record) => record.place.split(",")[0] === (iso));
             const death = placeData.reduce((sum, record) => sum + (parseInt(record.death_toll) || 0), 0);
             const color = death > 0 ? colorScale(death) : "#000000";
-            if (iso == "IQ") {
-                console.log("death on function call: ", death);
-            }
-            // Only update fillColor if overlayInfo is not null and all required fields are present
         return {
             fillColor: color,
             weight: 1,
@@ -156,8 +153,9 @@ const getData = useCallback((isop: string) => {
     const onEachFeature = (feature: Feature, layer: Layer) => {
         
 
-        layer.addEventListener("click", () => {
 
+        layer.addEventListener("click", () => {
+            if (!geoData || geoData.length === 0) return;
             if (!mapRef) return;
             const iso = feature?.properties?.iso_a2;
             const placeData = geoData.filter((record) => record.place.split(",")[0] === (iso));
@@ -168,7 +166,6 @@ const getData = useCallback((isop: string) => {
             if (bounds) {
                 mapRef.fitBounds(bounds, { padding: [40, 40], maxZoom: 6});
             }
-            console.log("color on click: ",fillColor);
 
             
 
@@ -223,9 +220,8 @@ const getData = useCallback((isop: string) => {
     }
 
     return (
-    <div className="flex flex-col items-center justify-center !m-[200px]">
-        <Header year={year} />
-        <Suspense>
+    <div className="flex flex-col items-center justify-center !p-[200px]">
+            <Header year={year} />
             <div style={{ position: 'relative' }}>
                 {overlayInfo && (
                     <div
@@ -278,13 +274,12 @@ const getData = useCallback((isop: string) => {
                     </>
                 ) : null}
             </div>
-        </Suspense>
         <Slider onChange={onChangeYear} year={year} />
         <AnimatePresence mode="sync">
-        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Conflicts that ended before 1989 are not be included on the map.</motion.p>}
-        {year > 2019 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080] items-center ">Ongoing and recent wars death counts have varying degrees of accuracy. Wars that have ended recently will also be innacurate.</motion.p>}
-                <motion.p layout key={2} className="text-[#808080] items-center !mt-5 !mb-5">To be classified as a conflict, there has to be a conflict with 2 sides which sustained more than 25 battle deaths. Some sides are not included, for example the Russian annexation of Crimea doesn't include Russia as a party member of the war because they sustained less than 25 deaths due to war. </motion.p>
-        <motion.p layout key={3} className="text-[#808080] items-center !mt-5">
+        {year < 1989 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={1} className="text-[#808080]  ">Conflicts that ended before 1989 are not be included on the map.</motion.p>}
+        {year > 2019 && <motion.p layout initial={{opacity: 0}} exit={{opacity: 0}} animate={{opacity: 1}} key={4} className="text-[#808080]  ">Ongoing and recent wars death counts have varying degrees of accuracy. Wars that have ended recently will also be innacurate.</motion.p>}
+                <motion.p layout key={2} className="text-[#808080]  !mt-5 !mb-5">To be classified as a conflict, there has to be a conflict with 2 sides which sustained more than 25 battle deaths. Some sides are not included, for example the Russian annexation of Crimea doesn't include Russia as a party member of the war because they sustained less than 25 deaths due to war. </motion.p>
+        <motion.p layout key={3} className="text-[#808080]  !mt-5">
 Sources: {"\n"}
 • Davies, S., Pettersson, T., Sollenberg, M., & Öberg, M. (2025). Organized violence 1989-2024, and the challenges of identifying civilian victims. Journal of Peace Research, 62(4).
 • Gleditsch, Nils Petter, Peter Wallensteen, Mikael Eriksson, Margareta Sollenberg, and Håvard Strand (2002) Armed Conflict 1946-2001: A New Dataset. Journal of Peace Research 39(5).

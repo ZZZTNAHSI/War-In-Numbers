@@ -1,10 +1,8 @@
 "use client";
-import Fogs from "../fog/Fogs";
 import TitleHead from "../title/TitleHead";
 import { useScroll, motion, useTransform } from "framer-motion";
 import OrangeGlobe3D from "./Globe";
 import Texts from "./bottom/Texts";
-import { useEffect, useState } from "react";
 
 
 const Top: React.FC<{}> =  ({}) => {
