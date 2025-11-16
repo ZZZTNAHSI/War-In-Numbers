@@ -19,3 +19,14 @@
 
 /* overlay specific */
 .country-overlay path { vector-effect: non-scaling-stroke; }
+
+.map-container {
+    position: relative;
+}
+
+.country-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left; /* important */
+}

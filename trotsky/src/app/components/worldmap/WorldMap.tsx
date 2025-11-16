@@ -30,7 +30,11 @@ const bounds = new L.LatLngBounds(
   [110, 200]  
 );
 
-
+function isChrome() {
+  if (typeof navigator === "undefined") return false; // server-side safety
+  const ua = navigator.userAgent;
+  return /Chrome/.test(ua) && !/Edg|OPR|Brave/i.test(ua);
+}
 
 
 const WorldMap: React.FC<{}> = () => {
@@ -233,7 +237,7 @@ const getData = useCallback((isop: string) => {
                             height: '100%',
                             zIndex: 1000,
                             pointerEvents: 'none',
-                            background: 'rgba(0,0,0,0.8)',
+                            background: isChrome() ?  'rgba(0,0,0,0.8)' : "black",
                             backdropFilter: 'blur(3px)',
                         }}
                     />
