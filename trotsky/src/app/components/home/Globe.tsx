@@ -29,7 +29,7 @@ const Globe: React.FC<{}> = () => {
     
       return (
         <mesh ref={globeRef}>
-          <sphereGeometry args={[1, 128, 128]} />
+          <sphereGeometry args={[1, 32, 32]} />
             <meshStandardMaterial
               map={globe}                 // visible texture
               emissiveMap={globe}         // glow from texture brightness
